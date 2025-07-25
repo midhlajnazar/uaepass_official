@@ -157,7 +157,7 @@ class UaePassAPI {
       if (response.statusCode == 200) {
         final profile = UAEPASSUserProfile.fromJson(jsonDecode(response.body));
 
-        if (_blockSOP1 && profile.userType == 'SOP2') {
+        if (_blockSOP1 && profile.userType == 'SOP1') {
           debugPrint('UAEPASS >> UNAUTHORISED >> ${profile.userType} ');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
