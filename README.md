@@ -25,10 +25,7 @@ Unofficial UAE PASS Flutter package enabling seamless national digital identity 
 
 ```yaml
 dependencies:
-  uaepass_api:
-    git:
-      url: https://github.com/midhlajnazar/uaepass_official
-      ref: master
+  uaepass_official: ^0.0.1
 ````
 
 ### 2. Fetch dependencies
