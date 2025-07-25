@@ -1,3 +1,11 @@
+
+
+
+## 0.0.2
+* Minor Readme Updates
+
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Initial release.
+
+

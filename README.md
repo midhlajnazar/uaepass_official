@@ -37,7 +37,7 @@ flutter pub get
 ### 3. Import the package
 
 ```dart
-import 'package:uaepass_official/uaepass_api.dart';
+import 'package:uaepass_official/uaepass_official.dart';';
 ```
 
 ---
@@ -99,7 +99,7 @@ UaePassAPI uaePassAPI = UaePassAPI(
 ### `getUserProfile(String token, {required context})`
 
 * Fetches user's profile from UAE Pass.
-* If `blockSOP1 = true` and user is SOP1 or SOP2, shows a localized `SnackBar` and blocks further access.
+* If `blockSOP1 = true` and user is SOP1, shows a localized `SnackBar` and blocks further access.
 
 ---
 
