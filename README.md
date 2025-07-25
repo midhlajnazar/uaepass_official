@@ -16,6 +16,8 @@ Unofficial UAE PASS Flutter package enabling seamless national digital identity 
 - 🔄 Easily integrates with **Riverpod**, **Bloc**, or any other state management
 - 🌐 Multilingual support (English / Arabic)
 - 🔒 SOP1 user type blocking (optional)
+- ⚠️ This package only supports **Android** and **iOS**. Other platforms like web, Windows, or macOS are not supported.
+
 
 ---
 
