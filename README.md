@@ -1,7 +1,7 @@
 
 
 ````markdown
-# 🇦🇪 uaepass_official
+# uaepass_official
 
 Unofficial UAE PASS Flutter package enabling seamless national digital identity authentication with support for **installed** and **non-installed** UAEPass app scenarios.
 
