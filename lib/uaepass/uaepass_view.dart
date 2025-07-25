@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
-import 'package:uaepass_api/service/memory_service.dart';
-import 'package:uaepass_api/uaepass/constant.dart';
+import 'package:uaepass_official/service/memory_service.dart';
+import 'package:uaepass_official/uaepass/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

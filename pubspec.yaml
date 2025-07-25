@@ -1,7 +1,7 @@
 name: uaepass_official
 description: Flutter UAE PASS package for Authentication API (Login , Logout , Get user profile).
 
-version: 1.0.3
+version: 0.0.1
 homepage: https://github.com/midhlajnazar/uaepass_official
 repository: https://github.com/midhlajnazar/uaepass_official
 issue_tracker: https://github.com/midhlajnazar/uaepass_official/issues
