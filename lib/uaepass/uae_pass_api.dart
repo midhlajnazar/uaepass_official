@@ -86,25 +86,38 @@ class UaePassAPI {
   /// [context]: Required to push the login webview onto the navigation stack.
   ///
   /// Returns the authorization [String] code upon successful login.
-  Future<String?> signIn(BuildContext context) async {
-    await MemoryService.instance.initialize();
-    String url = await _getURL();
-    if (context.mounted) {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CustomWebView(
-            url: url,
-            callbackUrl: _callbackUrl,
-            isProduction: _isProduction,
-            locale: _language,
-          ),
-        ),
-      );
-      return MemoryService.instance.accessCode;
-    }
-    return MemoryService.instance.accessCode;
+  
+Future<String?> signIn(BuildContext context) async {
+  final memoryService = MemoryService.instance;
+
+  // Ensure storage is initialized once before use
+  await memoryService.initialize();
+
+  final String url = await _getURL();
+
+  if (!context.mounted) return null;
+
+  final result = await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CustomWebView(
+        url: url,
+        callbackUrl: _callbackUrl,
+        isProduction: _isProduction,
+        locale: _language,
+      ),
+    ),
+  );
+
+  // Optional delay if the WebView didn't return a result
+  if (result == null) {
+    debugPrint('Awaiting for UAEPASS code');
+    await Future.delayed(const Duration(seconds: 2));
   }
+
+  return memoryService.accessCode;
+}
+
 
   /// Exchanges the authorization code for an access token.
   ///

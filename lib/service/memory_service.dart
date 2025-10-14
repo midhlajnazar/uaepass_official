@@ -1,25 +1,22 @@
-import 'package:get_storage/get_storage.dart';
-
+import 'package:get_storage/get_storage.dart';  
+  
 
 class MemoryService {
-  static final MemoryService _mInstance = MemoryService._();
+  static final MemoryService _instance = MemoryService._internal();
+  static MemoryService get instance => _instance;
 
-  static MemoryService get instance => _mInstance;
+  GetStorage? _storage;
+  bool _initialized = false;
 
-  late GetStorage _storage;
+  MemoryService._internal();
 
-  MemoryService._() {
-    _storage = GetStorage('uae-pass-app');
-  }
-
-  Future initialize() async {
+  Future<void> initialize() async {
+    if (_initialized) return; // ✅ Do nothing if already initialized
     await GetStorage.init('uae-pass-app');
+    _storage = GetStorage('uae-pass-app');
+    _initialized = true;
   }
 
-
-
-  String? get accessCode => _storage.read("accessCode");
-  set accessCode(String? value) => _storage.write("accessCode", value);
-
-
+  String? get accessCode => _storage?.read<String>('accessCode');
+  set accessCode(String? value) => _storage?.write('accessCode', value);
 }

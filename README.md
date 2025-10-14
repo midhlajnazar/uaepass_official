@@ -27,7 +27,7 @@ Unofficial UAE PASS Flutter package enabling seamless national digital identity 
 
 ```yaml
 dependencies:
-  uaepass_official: ^0.0.1
+  uaepass_official: ^0.0.5
 ````
 
 ### 2. Fetch dependencies
@@ -243,10 +243,42 @@ class UaePassController extends _$UaePassController {
 
 ## 🔍 Notes
 
-* Ensure that the **callback scheme** (e.g., `<your_app_scheme>://auth`) is **registered/whitelisted** in the UAEPass admin panel.
+* Ensure that the **callback scheme** (e.g., `<your_app_scheme>://auth`) is **registered/whitelisted** in the UAEPass admin panel in production.
+* Ensure that <your_app_scheme> name doesn't end with "uaepass"
 * SOP1 users are automatically rejected when `blockSOP1: true`.
 * Make sure `callbackUrl` and `clientId` are configured correctly in the UAEPass dashboard.
 * This package assumes use of a shared in-memory service (`MemoryService`) to store the temporary access code.
+
+---
+
+## 📚 Example Staging Configuration for UAEPASS
+
+```
+class UAEPassConstant {
+  static const bool uaePassIsProductionEnvironment = false;
+  static const bool blockSOP1Users = true;
+  static const String serviceProviderEnglishName = 'My Application';
+  static const String serviceProviderArabicName = 'تطبيقي';
+  static const String uaePassClientId = uaePassIsStagingEnvironment ? 'sandbox_stage' : 'xxxxxxx';
+  static const String uaePassClientSecret = uaePassIsStagingEnvironment ? 'sandbox_stage' : 'xxxxxxxx';
+  //Scheme must be lowercase and doesnt end with uaepass
+  static const String uaePassScheme =  'yourappscheme';
+  static const String uaePassCallbackUrl = '$uaePassScheme://auth';
+}
+...
+
+final uaePassAPI = UaePassAPI(
+  clientId: UAEPassConstant.uaePassClientId,
+  callbackUrl: UAEPassConstant.uaePassCallbackUrl,
+  clientSecrete: UAEPassConstant.uaePassClientSecret,
+  isProduction: UAEPassConstant.uaePassIsProductionEnvironment,
+  blockSOP1: UAEPassConstant.blockSOP1Users,
+  language: 'en',//or 'ar'
+  serviceProviderArabicName: UAEPassConstant.serviceProviderArabicName,
+  serviceProviderEnglishName: UAEPassConstant.serviceProviderEnglishName,
+    );
+```
+
 
 ---
 

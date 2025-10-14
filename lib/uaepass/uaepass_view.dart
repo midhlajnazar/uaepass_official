@@ -12,7 +12,12 @@ class CustomWebView extends StatefulWidget {
   final bool isProduction;
   final String locale;
 
-  const CustomWebView({super.key, required this.url, required this.callbackUrl, required this.isProduction, this.locale = 'en'});
+  const CustomWebView(
+      {super.key,
+      required this.url,
+      required this.callbackUrl,
+      required this.isProduction,
+      this.locale = 'en'});
 
   @override
   State<CustomWebView> createState() => _CustomWebViewState();
@@ -22,6 +27,31 @@ class _CustomWebViewState extends State<CustomWebView> {
   late WebViewController controller;
   String? successUrl;
   late StreamSubscription<FGBGType> subscription;
+
+  Future<void> _initialize() async { 
+
+    // ✅ Setup controller only after storage ready
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..clearCache()
+      ..clearLocalStorage()
+      ..setNavigationDelegate(
+        NavigationDelegate(onNavigationRequest: onNavigationRequest),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+
+    // ✅ Handle app foreground event
+    subscription = FGBGEvents.instance.stream.listen((event) {
+      if (event == FGBGType.foreground && successUrl != null) {
+        final decoded = Uri.decodeFull(successUrl!);
+        controller.loadRequest(Uri.parse(decoded));
+      }
+    });
+        // ✅ Ensure GetStorage is ready before any UAEPASS interaction
+    await MemoryService.instance.initialize();
+ 
+  }
 
   @override
   void dispose() {
@@ -34,41 +64,19 @@ class _CustomWebViewState extends State<CustomWebView> {
   @override
   void initState() {
     super.initState();
-
-    subscription = FGBGEvents.instance.stream.listen((event) {
-      if (event == FGBGType.foreground) {
-        if (successUrl != null) {
-          final decoded = Uri.decodeFull(successUrl!);
-          controller.loadRequest(Uri.parse(decoded));
-        }
-      }
-    });
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..clearCache()
-      ..clearLocalStorage()
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {},
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {},
-          onNavigationRequest: onNavigationRequest,
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
-    super.initState();
+    _initialize();
   }
 
-  Future<NavigationDecision> onNavigationRequest(NavigationRequest request) async {
+  Future<NavigationDecision> onNavigationRequest(
+      NavigationRequest request) async {
     String url = request.url.toString();
     debugPrint('UAEPASS url: $url');
-    if (url.contains('uaepass://')) {
+    if (url.contains('uaepass://') || url.contains('uaepassstg://')) {
       Uri uri = Uri.parse(url);
       String? successURL = uri.queryParameters['successurl'];
-      successUrl = successURL;
-      final newUrl = '${Const.uaePassScheme(widget.isProduction)}${uri.host}${uri.path}';
+      setState(() => successUrl = successURL);
+      final newUrl =
+          '${Const.uaePassScheme(widget.isProduction)}${uri.host}${uri.path}';
       String u = "$newUrl?successurl=${widget.callbackUrl}"
           "&failureurl=${widget.callbackUrl}"
           "&closeondone=true";
@@ -77,10 +85,17 @@ class _CustomWebViewState extends State<CustomWebView> {
     }
 
     if (url.contains('code=')) {
-      String code = Uri.parse(url).queryParameters['code']!;
-      MemoryService.instance.accessCode = code;
-      debugPrint('UAEPASS code: $code');
-      Navigator.of(context).pop(code);
+      final memoryService = MemoryService.instance;
+
+      memoryService.accessCode = Uri.parse(url).queryParameters['code']!;
+      debugPrint('UAEPASS code: ${memoryService.accessCode}');
+      try {
+        if (context.mounted) {
+          Navigator.of(context).maybePop(memoryService.accessCode);
+        }
+      } catch (e) {
+        debugPrint('Poping error: $e');
+      }
       return NavigationDecision.prevent;
     } else if (url.contains('error=invalid_request') ||
         url.contains('error=login_required') ||
@@ -91,7 +106,9 @@ class _CustomWebViewState extends State<CustomWebView> {
       // ✅ Show the SnackBar here as per the uaepass use-case documentation
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.locale == 'ar' ? 'قام المستخدم بإلغاء تسجيل الدخول' : 'User cancelled the login'),
+          content: Text(widget.locale == 'ar'
+              ? 'قام المستخدم بإلغاء تسجيل الدخول'
+              : 'User cancelled the login'),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 5),
@@ -105,7 +122,9 @@ class _CustomWebViewState extends State<CustomWebView> {
     } else if (url == widget.callbackUrl && widget.url.contains('logout')) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.locale == 'ar' ? 'تم تسجيل الخروج بنجاح' : 'Successfully Logout'),
+          content: Text(widget.locale == 'ar'
+              ? 'تم تسجيل الخروج بنجاح'
+              : 'Logout successful'),
           backgroundColor: Colors.black,
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 3),
