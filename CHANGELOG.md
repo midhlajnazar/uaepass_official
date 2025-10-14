@@ -1,3 +1,6 @@
+## 0.0.5
+* Minor Bug Fixes
+
 ## 0.0.4
 * Minor Bug Fixes
 
@@ -9,7 +12,6 @@
 * Minor Readme Updates
 
 ## 0.0.1
-
 * Initial release.
 
 
