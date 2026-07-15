@@ -1,3 +1,10 @@
+## 0.1.0
+
+* Added unifiedId & profileType in Model .
+* Added isVisitor Parameter .
+* Fixed a major bug.
+
+
 ## 0.0.5
 * Minor Bug Fixes
 

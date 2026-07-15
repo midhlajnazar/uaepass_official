@@ -130,6 +130,7 @@ class UaePassController extends _$UaePassController {
       clientSecrete: UAEPassConstant.uaePassClientSecret,
       isProduction: !UAEPassConstant.uaePassIsStagingEnvironment,
       blockSOP1: true,
+      isVisitor: false,
       language: 'en',
       serviceProviderArabicName: UAEPassConstant.serviceProviderArabicName,
       serviceProviderEnglishName: UAEPassConstant.serviceProviderEnglishName,
@@ -257,6 +258,7 @@ class UaePassController extends _$UaePassController {
 class UAEPassConstant {
   static const bool uaePassIsProductionEnvironment = false;
   static const bool blockSOP1Users = true;
+  static const bool isVisitor = false;
   static const String serviceProviderEnglishName = 'My Application';
   static const String serviceProviderArabicName = 'تطبيقي';
   static const String uaePassClientId = uaePassIsStagingEnvironment ? 'sandbox_stage' : 'xxxxxxx';
@@ -273,6 +275,7 @@ final uaePassAPI = UaePassAPI(
   clientSecrete: UAEPassConstant.uaePassClientSecret,
   isProduction: UAEPassConstant.uaePassIsProductionEnvironment,
   blockSOP1: UAEPassConstant.blockSOP1Users,
+  isVisitor: UAEPassConstant.isVisitor,
   language: 'en',//or 'ar'
   serviceProviderArabicName: UAEPassConstant.serviceProviderArabicName,
   serviceProviderEnglishName: UAEPassConstant.serviceProviderEnglishName,

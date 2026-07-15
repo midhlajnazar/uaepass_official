@@ -14,6 +14,8 @@ class UAEPASSUserProfile {
   String? nationalityAR;
   String? firstNameAR;
   String? email;
+  String? unifiedID;
+  String? profileType;
 
   UAEPASSUserProfile(
       {this.sub,
@@ -30,7 +32,9 @@ class UAEPASSUserProfile {
       this.userType,
       this.nationalityAR,
       this.firstNameAR,
-      this.email});
+      this.email,
+      this.unifiedID,
+      this.profileType});
 
   UAEPASSUserProfile.fromJson(Map<String, dynamic> json) {
     sub = json['sub'];
@@ -48,6 +52,8 @@ class UAEPASSUserProfile {
     nationalityAR = json['nationalityAR'];
     firstNameAR = json['firstnameAR'];
     email = json['email'];
+    unifiedID = json['unifiedID'];
+    profileType = json['profileType'];
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +73,8 @@ class UAEPASSUserProfile {
       'nationalityAR': nationalityAR,
       'firstnameAR': firstNameAR,
       'email': email,
+      'unifiedID': unifiedID,
+      'profileType': profileType,
     };
   }
 }

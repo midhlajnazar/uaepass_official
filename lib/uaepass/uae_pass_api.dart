@@ -23,6 +23,7 @@ class UaePassAPI {
   final String _serviceProviderArabicName;
   final bool _isProduction;
   final bool _blockSOP1;
+  final bool _isVisitor;
 
   /// Creates an instance of [UaePassAPI].
   ///
@@ -43,6 +44,7 @@ class UaePassAPI {
     String serviceProviderArabicName = 'مزود الخدمة',
     required bool isProduction,
     bool blockSOP1 = false,
+    bool isVisitor = false,
     String language = 'en',
   })  : _clientId = clientId,
         _callbackUrl = callbackUrl,
@@ -51,6 +53,7 @@ class UaePassAPI {
         _serviceProviderArabicName = serviceProviderArabicName,
         _isProduction = isProduction,
         _blockSOP1 = blockSOP1,
+        _isVisitor = isVisitor,
         _language = language;
 
   /// Constructs the authorization URL used to initiate the UAE Pass login flow.
@@ -74,7 +77,7 @@ class UaePassAPI {
     return "${Const.baseUrl(_isProduction)}/idshub/authorize?"
         "response_type=code"
         "&client_id=$_clientId"
-        "&scope=urn:uae:digitalid:profile:general"
+        "&scope=urn:uae:digitalid:profile:general ${_isVisitor ? 'urn:uae:digitalid:profile:general:profileType urn:uae:digitalid:profile:general:unifiedId' : ''}"
         "&state=HnlHOJTkTb66Y5H"
         "&redirect_uri=$_callbackUrl"
         "&ui_locales=$_language"
@@ -86,38 +89,37 @@ class UaePassAPI {
   /// [context]: Required to push the login webview onto the navigation stack.
   ///
   /// Returns the authorization [String] code upon successful login.
-  
-Future<String?> signIn(BuildContext context) async {
-  final memoryService = MemoryService.instance;
 
-  // Ensure storage is initialized once before use
-  await memoryService.initialize();
+  Future<String?> signIn(BuildContext context) async {
+    final memoryService = MemoryService.instance;
 
-  final String url = await _getURL();
+    // Ensure storage is initialized once before use
+    await memoryService.initialize();
 
-  if (!context.mounted) return null;
+    final String url = await _getURL();
 
-  final result = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => CustomWebView(
-        url: url,
-        callbackUrl: _callbackUrl,
-        isProduction: _isProduction,
-        locale: _language,
+    if (!context.mounted) return null;
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CustomWebView(
+          url: url,
+          callbackUrl: _callbackUrl,
+          isProduction: _isProduction,
+          locale: _language,
+        ),
       ),
-    ),
-  );
+    );
 
-  // Optional delay if the WebView didn't return a result
-  if (result == null) {
-    debugPrint('Awaiting for UAEPASS code');
-    await Future.delayed(const Duration(seconds: 2));
+    // Optional delay if the WebView didn't return a result
+    if (result == null) {
+      debugPrint('Awaiting for UAEPASS code');
+      await Future.delayed(const Duration(seconds: 2));
+    }
+
+    return memoryService.accessCode;
   }
-
-  return memoryService.accessCode;
-}
-
 
   /// Exchanges the authorization code for an access token.
   ///
