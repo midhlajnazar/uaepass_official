@@ -69,6 +69,7 @@ UaePassAPI uaePassAPI = UaePassAPI(
 * `isProduction` – If `true`, production URLs are used; otherwise, sandbox.
 * `language` – "en" or "ar" to toggle the UAE Pass page language.
 * `blockSOP1` – Blocks login for users of type `SOP1` (unauthorized).
+* `isVisitor` – Control if logging by visitor or not.
 * `serviceProviderEnglishName` – Name shown in messages (English).
 * `serviceProviderArabicName` – Name shown in messages (Arabic).
 
